@@ -3,6 +3,8 @@ package com.ucsdextandroid1.musicsearch.search;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -11,6 +13,7 @@ import android.widget.EditText;
 
 import com.ucsdextandroid1.musicsearch.R;
 import com.ucsdextandroid1.musicsearch.data.DataSources;
+import com.ucsdextandroid1.musicsearch.data.SongItem;
 import com.ucsdextandroid1.musicsearch.utils.Debouncer;
 
 import java.util.Collections;
@@ -46,7 +49,19 @@ public class SearchActivity extends AppCompatActivity {
                 debouncer.onChange(s.toString());
             }
         });
+
+        searchAdapter.setOnItemClickListener(new OnItemClickListener<SongItem>() {
+            @Override
+            public void onItemClicked(SongItem item) {
+                Intent intent = new Intent(SearchActivity.this, MusicDetailsActivity.class);
+                intent.putExtra("song", item);
+
+                startActivity(intent);
+            }
+        });
     }
+
+
 
     /**
      * Debouncer keeps us from making a bunch of api calls if the text changes too quickly. We will

@@ -1,5 +1,7 @@
 package com.ucsdextandroid1.musicsearch.data;
 
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 
 import java.util.Objects;
@@ -7,7 +9,7 @@ import java.util.Objects;
 /**
  * Created by rjaylward on 2019-05-10
  */
-public interface SongItem {
+public interface SongItem extends Parcelable {
 
     long getTrackId();
 
