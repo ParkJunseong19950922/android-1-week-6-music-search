@@ -4,6 +4,7 @@ import android.app.AppComponentFactory;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,8 +17,10 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.squareup.picasso.Picasso;
 import com.ucsdextandroid1.musicsearch.R;
 import com.ucsdextandroid1.musicsearch.data.SongItem;
+import com.ucsdextandroid1.musicsearch.utils.Utils;
 
 import org.w3c.dom.Text;
 
@@ -28,7 +31,6 @@ public class MusicDetailsActivity extends AppCompatActivity {
     private TextView albumName = null;
     private TextView artistName = null;
     private ImageView artWork = null;
-    private ImageButton backButton = null;
 
     protected void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -37,48 +39,18 @@ public class MusicDetailsActivity extends AppCompatActivity {
         this.albumName = (TextView) findViewById(R.id.textViewSongName);
         this.artistName = (TextView) findViewById(R.id.textViewArtistName);
         this.artWork = (ImageView) findViewById(R.id.imageViewArtWork);
-        this.backButton = (ImageButton) findViewById(R.id.imageButtonBack);
 
         SongItem songItem = getIntent().getParcelableExtra("song");
 
         if (songItem != null){
             this.albumName.setText(songItem.getTrackName());
-            this.artistName.setText("By: "+songItem.getArtistName());
+            this.artistName.setText("Track ID: "+songItem.getTrackId()+"\n"+songItem.getAlbumName()+"  :  "+songItem.getArtistName()+"\n"+
+                    "Duration: "+songItem.getTrackTime()+"ms");
 
-            new DownloadImageTask(artWork).execute(songItem.getArtworkUrl());
+            Picasso.get().load(songItem.getArtworkUrl())
+                    .placeholder(new ColorDrawable(Utils.randomColor()))
+                    .into(artWork);
         }
 
-        this.backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MusicDetailsActivity.this, SearchActivity.class);
-
-                startActivity(intent);
-            }
-        });
-
-    }
-
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap bmp = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                bmp = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return bmp;
-        }
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
     }
 }
